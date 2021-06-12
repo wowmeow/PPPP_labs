@@ -70,15 +70,26 @@ const int matrixDist[SIZE][SIZE] = {
 {0, 1204, 0, 1302, 0, 0, 0, 919, 0, 951, 0, 0, 257, 0, 0, 2},
 {0, 0, 1234, 0, 1344, 1299, 0, 0, 1010, 0, 1050, 285, 281, 282, 2, 0} };
 
-
+/// BuildTrack
+//Facade
+//Prototype
 enum Type { Turbo, Standart, Economy };
-
-class Train
+class Transport
 {
-	int trainSpeed;
-	int trainVolume;
-	double trainPrice;
-	int distance;
+	int Speed;
+	int Volume;
+	double Price;
+	int Distance;
+
+public:
+	Source();
+	~Source();
+	clone(){return(this)};
+	
+};
+class Train:Transport
+{
+
 public:
 	Train();
 	Train(std::tuple<int, int, double>, int);
@@ -86,14 +97,16 @@ public:
 	double sumCost(int, int);
 	double sumTime(int);
 	int getDistance();
+	clone()
+	{
+		return(this)
+	}
+
 };
 
-class Plane
+class Plane:Transport
 {
-	int planeSpeed;
-	int planeVolume;
-	double planePrice;
-	int distance;
+
 public:
 	Plane();
 	Plane(std::tuple<int, int, double>, int);
@@ -101,22 +114,59 @@ public:
 	double sumCost(int, int);
 	double sumTime(int);
 	int getDistance();
+	clone()
+	{
+		return(this)
+	}
+
 };
 
-class Car
+class Car:Transport
 {
-	int carSpeed;
-	int carVolume;
-	double carPrice;
-	int distance;
+
 public:
 	Car();
 	Car(std::tuple<int, int, double>, int);
 	~Car();
 	double sumCost(int, int);
 	double sumTime(int);
+		clone()
+	{
+		return(this)
+	}
+
 	int getDistance();
 };
+class TrackBulder //Builder
+	{
+		double cost=0,time=0;
+		int volume = 0;
+		public: 
+			setVolume(int vol) {this.volume = vol};
+			reset()
+			{
+				this.cost = 0; 
+				this.time = 0;
+			};
+			setCar(Car car)
+			{
+				cost+=car.sumCost(volume, car1.getDistance());
+				time+=car.sumTime(car1.getDistance());
+			};
+
+			setTrain(Train train)
+			{
+				cost += train.sumCost(volume, train1.getDistance())
+				time += train.sumTime(train1.getDistance())
+			}
+			setPlane(Plane plane)
+			{
+				cost += plane.sumCost(volume, plane1.getDistance());
+				time += plane.sumTime(plane1.getDistance());
+			}
+			getResult(){return(new Track( cost,time,volume))}
+	};
+				
 
 class Track
 {
@@ -124,12 +174,14 @@ class Track
 	double time;
 	int volume;
 public:
+	Track(double cost,double time,int volume)
+	{};
 	Track();
-	Track(Car, int);
-	Track(Car, Car, Train, int);
-	Track(Car, Car, Plane, int);
-	Track(Car, Car, Car, Train, Plane, int);
-	Track(Car, Car, Car, Car, Train, Train, Plane, int);
+	// Track(Car, int);
+	// Track(Car, Car, Train, int);
+	// Track(Car, Car, Plane, int);
+	// Track(Car, Car, Car, Train, Plane, int);
+	// Track(Car, Car, Car, Car, Train, Train, Plane, int);
 	double getCost();
 	~Track();
 };
@@ -273,47 +325,47 @@ Track::~Track()
 
 }
 
-Track::Track(Car car1, int volume)
-{
-	cost = car1.sumCost(volume, car1.getDistance());
-	time = car1.sumTime(car1.getDistance());
-}
+// Track::Track(Car car1, int volume)
+// {
+// 	cost = car1.sumCost(volume, car1.getDistance());
+// 	time = car1.sumTime(car1.getDistance());
+// }
 
-Track::Track(Car car1, Car car2, Train train1, int volume)
-{
-	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance());
-	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance());
-	cost += train1.sumCost(volume, train1.getDistance());
-	time += train1.sumTime(train1.getDistance());
-}
+// Track::Track(Car car1, Car car2, Train train1, int volume)
+// {
+// 	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance());
+// 	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance());
+// 	cost += train1.sumCost(volume, train1.getDistance());
+// 	time += train1.sumTime(train1.getDistance());
+// }
 
-Track::Track(Car car1, Car car2, Plane plane1, int volume)
-{
-	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance());
-	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance());
-	cost += plane1.sumCost(volume, plane1.getDistance());
-	time += plane1.sumTime(plane1.getDistance());
-}
+// Track::Track(Car car1, Car car2, Plane plane1, int volume)
+// {
+// 	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance());
+// 	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance());
+// 	cost += plane1.sumCost(volume, plane1.getDistance());
+// 	time += plane1.sumTime(plane1.getDistance());
+// }
 
-Track::Track(Car car1, Car car2, Car car3, Train train1, Plane plane1, int volume)
-{
-	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance()) + car3.sumCost(volume, car3.getDistance());
-	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance()) + car3.sumTime(car3.getDistance());
-	cost += train1.sumCost(volume, train1.getDistance());
-	time += train1.sumTime(train1.getDistance());
-	cost += plane1.sumCost(volume, plane1.getDistance());
-	time += plane1.sumTime(plane1.getDistance());
-}
+// Track::Track(Car car1, Car car2, Car car3, Train train1, Plane plane1, int volume)
+// {
+// 	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance()) + car3.sumCost(volume, car3.getDistance());
+// 	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance()) + car3.sumTime(car3.getDistance());
+// 	cost += train1.sumCost(volume, train1.getDistance());
+// 	time += train1.sumTime(train1.getDistance());
+// 	cost += plane1.sumCost(volume, plane1.getDistance());
+// 	time += plane1.sumTime(plane1.getDistance());
+// }
 
-Track::Track(Car car1, Car car2, Car car3, Car car4, Train train1, Train train2, Plane plane1, int volume)
-{
-	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance()) + car3.sumCost(volume, car3.getDistance()) + car4.sumCost(volume, car4.getDistance());
-	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance()) + car3.sumTime(car3.getDistance()) + car4.sumTime(car4.getDistance());
-	cost += train1.sumCost(volume, train1.getDistance()) + train2.sumCost(volume, train2.getDistance());
-	time += train1.sumTime(train1.getDistance()) + train2.sumTime(train2.getDistance());
-	cost += plane1.sumCost(volume, plane1.getDistance());
-	time += plane1.sumTime(plane1.getDistance());
-}
+// Track::Track(Car car1, Car car2, Car car3, Car car4, Train train1, Train train2, Plane plane1, int volume)
+// {
+// 	cost = car1.sumCost(volume, car1.getDistance()) + car2.sumCost(volume, car2.getDistance()) + car3.sumCost(volume, car3.getDistance()) + car4.sumCost(volume, car4.getDistance());
+// 	time = car1.sumTime(car1.getDistance()) + car2.sumTime(car2.getDistance()) + car3.sumTime(car3.getDistance()) + car4.sumTime(car4.getDistance());
+// 	cost += train1.sumCost(volume, train1.getDistance()) + train2.sumCost(volume, train2.getDistance());
+// 	time += train1.sumTime(train1.getDistance()) + train2.sumTime(train2.getDistance());
+// 	cost += plane1.sumCost(volume, plane1.getDistance());
+// 	time += plane1.sumTime(plane1.getDistance());
+// }
 
 double Track::getCost()
 {
